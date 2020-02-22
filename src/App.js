@@ -8,7 +8,12 @@ import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import { withStyles } from '@material-ui/core/styles';
-
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import Typography from '@material-ui/core/Typography';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { JsonViewer } from './componentes';
 
 const useStyles = (theme=>({
   root: {
@@ -19,6 +24,10 @@ const useStyles = (theme=>({
     '& .MuiTextField-root': {
       margin: theme.spacing(1),
       width: 200,
+    },
+    heading: {
+      fontSize: theme.typography.pxToRem(15),
+      fontWeight: theme.typography.fontWeightRegular,
     },
   },
 }));
@@ -55,13 +64,13 @@ class App extends Component {
       consideration: 'Validara que el correo electrónico no exista. Si es así registrara el usuario con un tipo de usuario cliente y regresara el\n\nestatus 0 y el id del usuario registrado. De otro modo mostrará el estatus 1.\n\nLas tablas relacionadas son Usuarios, TipoUsuarios, Estados.',
       method: 'POST',
       tipo: 'application/json',
-
+      peticion: {},
     }
   }
 
 
   _getMarkFormat() {
-    const { title, description, consideration, method, tipo } = this.state
+    const { title, description, consideration, method, tipo, peticion } = this.state
     return '' +
       (title && `# ${title} \n`) +
       (description && `***\n> ${description} \n*** \n` )+
@@ -80,7 +89,7 @@ class App extends Component {
   }
   _onCloseAlert = () => this.setState({openAlert:false})
   render() {
-    const { title, description, consideration, openAlert, method, tipo } = this.state
+    const { title, description, consideration, openAlert, method, tipo, peticion } = this.state
     const { classes } = this.props;
     const metodosComunes = ['POST','GET'];
     const tiposComunes = ['application/json'];
@@ -92,9 +101,12 @@ class App extends Component {
               <TextField multiline={true} style={{width:'100%'}} label="Titulo" variant="outlined" value={title} onChange={({target:{value}})=>this.setState({title:value})} />
               <TextField multiline={true} style={{width:'100%'}} label="Descripción" variant="outlined" value={description} onChange={({target:{value}})=>this.setState({description:value})} />
               <TextField multiline={true} style={{width:'100%'}} label="Consideraciones" variant="outlined" value={consideration} onChange={({target:{value}})=>this.setState({consideration:value})} />
-              <div className='d-flex'>
+              <div className='d-flex w-100 justify-content-around'>
                 <Autocomplete
                   options={metodosComunes}
+                  value={method}
+                  
+                  onInputChange={(_,value)=>this.setState({method:value})}
                   renderInput={params => (
                     <TextField {...params} label="Metodo" variant="outlined" fullWidth />
                   )}
@@ -102,11 +114,15 @@ class App extends Component {
                 <Autocomplete
                   options={tiposComunes}
                   value={tipo}
-                  freeSolo
+                  onInputChange={(_,value)=>this.setState({tipo:value})}
                   renderInput={params => (
-                    <TextField {...params} label="Tipo" variant="outlined" fullWidth  />
+                    <TextField {...params} label="Tipo" variant="outlined" fullWidth />
                   )}
                 />
+              </div>
+              <div>
+                <Typography className={classes.heading}>Petición</Typography>
+                <JsonViewer value={peticion} onChange={value=>this.setState({peticion:value})} />
               </div>
               </div>
           </div>

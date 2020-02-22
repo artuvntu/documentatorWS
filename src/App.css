@@ -13,6 +13,8 @@
 .content-main {
   padding: 1rem !important;
   background-color: aliceblue;
+  height: 100vh;
+  
 }
 .cursor {
   cursor: pointer;
