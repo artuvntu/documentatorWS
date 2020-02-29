@@ -1,7 +1,7 @@
 import React, { Component } from "react"
-import { Grid, TextField } from "@material-ui/core"
+import { Grid, TextField, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Button} from "@material-ui/core"
 import Autocomplete from "@material-ui/lab/Autocomplete"
-
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 /**
  * @augments Component<{value:Object, onChange:function}>
  */
@@ -13,25 +13,57 @@ export default class JsonViewer extends Component {
         Date: 'date',
         Boolean: 'bool',
     }
-    defaultProps = {
+    static defaultProps = {
         value: {
             nombre: 'Petición',
             tipo: JsonViewer.Json,
             defaultValue: '',
             elementos: [],
+            color:'lightskyblue'
         }
     }
-    _onChange = (value,elemento) => {
-
+    _onAdd = () => {
+        let { value, onChange } = this.props
+        value.elementos.push({
+            nombre: 'Petición',
+            tipo: JsonViewer.Json,
+            defaultValue: '',
+            elementos: [],
+            color: value.color !== 'lightskyblue' ? 'lightskyblue' : 'lightcoral',
+        })
+        onChange && onChange(value)
+    }
+    _onChange = (newValue,item) => {
+        let {value, onChange} = this.props;
+        value.elementos[item] = newValue;
+        onChange && onChange(value)
     }
     render() {
         const { value, onChange } = this.props
+        console.log(value);
+        if (value.tipo === JsonViewer.tipos.Json) 
+            return (
+                <ExpansionPanel style={{backgroundColor:value.color}}>
+                    <ExpansionPanelSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                    >
+                    <Row value={value} onChange={onChange} />
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails style={{flexDirection:'column'}}>
+                        {value.elementos.map((v,i)=><JsonViewer key={i} value={v} onChange={value=>this._onChange(value,i)}/>)}
+                        <Button variant="contained"  color="primary" style={{alignSelf:'center',margin:8}} onClick={this._onAdd} >Agregar</Button>
+                    </ExpansionPanelDetails>
+                </ExpansionPanel>
+            )
+        
         return (
             <Row value={value} onChange={onChange} />
         )
     }
 }
-function Row({value={}, onChange}) {
+function Row({value={}, onChange, onDelete}) {
     const tipos = Object.values(JsonViewer.tipos)
     const _onChange = (param,v) => {
         value[`${param}`] = v
@@ -47,7 +79,7 @@ function Row({value={}, onChange}) {
                     options={tipos}
                     value={value.tipo}
                     freeSolo = {false}
-                    onInputChange={(_,value)=>_onChange('tipos',value)}
+                    onInputChange={(_,value)=>_onChange('tipo',value)}
                     renderInput={params => (
                         <TextField {...params} label='Tipo' variant='outlined'  />
                     )}

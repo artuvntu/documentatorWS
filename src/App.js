@@ -8,11 +8,8 @@ import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import { withStyles } from '@material-ui/core/styles';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+
 import { JsonViewer } from './componentes';
 
 const useStyles = (theme=>({
@@ -64,7 +61,13 @@ class App extends Component {
       consideration: 'Validara que el correo electrónico no exista. Si es así registrara el usuario con un tipo de usuario cliente y regresara el\n\nestatus 0 y el id del usuario registrado. De otro modo mostrará el estatus 1.\n\nLas tablas relacionadas son Usuarios, TipoUsuarios, Estados.',
       method: 'POST',
       tipo: 'application/json',
-      peticion: {},
+      peticion: {
+        nombre: 'Petición',
+            tipo: JsonViewer.Json,
+            defaultValue: '',
+            elementos: [],
+            color:'lightskyblue'
+      },
     }
   }
 
@@ -122,7 +125,7 @@ class App extends Component {
               </div>
               <div>
                 <Typography className={classes.heading}>Petición</Typography>
-                <JsonViewer value={peticion} onChange={value=>this.setState({peticion:value})} />
+                <JsonViewer value={peticion} onChange={peticion=>this.setState({peticion})} />
               </div>
               </div>
           </div>
